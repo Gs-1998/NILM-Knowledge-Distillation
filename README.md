@@ -1,2 +1,2 @@
 # NILM-Knowledge-Distillation
-![](images/!washingmachinestudent.png)
+![](images/washingmachinestudent.png)
