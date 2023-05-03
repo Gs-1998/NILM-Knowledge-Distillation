@@ -19,8 +19,8 @@ window = 200
 batchsize =100
 alpha = 0.8
 
-|                 |       Fridge    | Fridge               |  Microwave | Washingmachine   | Dishwasher |
-|-----------------|:---------------:|:-----------------:|:-----------:|:------:|:----|
+|                 |       Fridge    |              |  Microwave | |Washingmachine   || Dishwasher ||
+|-----------------|:---------------:|:--------:|:---------:|:-----:|:------:|:-----:|:----:|:----|
 |                 |Teacher	| Student |	Teacher	| Student |	Teacher	| Student	| Teacher	| Student |
 | Accuracy          | 3, 4, 6, 7, 8, 9, 12, 13, 19, 20 |     5       |   2    |
 | SAE       | 10, 12, 19                       |    17       |   4    |
