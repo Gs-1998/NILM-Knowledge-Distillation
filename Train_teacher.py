@@ -17,9 +17,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 
 
-
-
-
 def remove_space(string):
     return string.replace(" ","")
 
@@ -66,42 +63,34 @@ args = get_arguments()
 
 log_file=args.log_path+"/"+args.name_log+".log"
 img = args.name_log+".png"
-print(log_file)
-print(img)
 windows_length = args.window
+#create logging file
 logging.basicConfig(filename=log_file, filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 MAX_X = 2000
 MAX_y = 200
 
-X_train_seg,y_train_seg,X_test_seg,y_test_seg, X2 = load_data(savepath=args.dataset_savepath,appliance=args.appliance)
-#X_train_seg,y_train_seg,X_test_seg,y_test_seg, X2 = load_data2()
+X_train_seg,y_train_seg,X_test_seg,y_test_seg, X_test = load_data(savepath=args.dataset_savepath, appliance=args.appliance)
 
 if not os.path.exists(args.teacher_model+"/model/"):
     print("make directory " + args.teacher_model+"/model/")
     os.makedirs(args.teacher_model+"/model/")
 
+if args.model=="GRU":
+    model = create_model(windows_length, 'GRU')
+if args.model=="SGRU":
+    model = create_model(windows_length, 'SGRU')
 
 callbacks = [
     EarlyStopping(monitor='val_loss', patience=2, verbose=0),
     ModelCheckpoint(filepath=args.teacher_model+"/model/"+args.appliance +args.model+str(args.batch_size)+".h5", verbose=0, save_best_only=True)
 ]
-if args.model=="GRU":
-    model_CONV1D = create_model(windows_length, 'GRU')
-if args.model=="SGRU":
-    model_CONV1D = create_model(windows_length, 'SGRU')
+model.compile(loss='mse', optimizer="adam", metrics='acc')
 
-model_CONV1D.compile(loss='mse', optimizer="adam", metrics='acc')
-print("ingresso")
-print(X_train_seg.shape)
-history_i = model_CONV1D.fit(X_train_seg,y_train_seg,epochs=20,batch_size=args.batch_size,validation_split=0.005,validation_data=(X_test_seg,y_test_seg),callbacks=callbacks)
+#fit model
+history_i = model.fit(X_train_seg, y_train_seg, epochs=20, batch_size=args.batch_size, validation_split=0.005, validation_data=(X_test_seg, y_test_seg), callbacks=callbacks)
 
-pred= model_CONV1D.predict(X_test_seg)
-
-mse_loss_norm = mse_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-mae_loss_norm = mae_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-#logging.warning('Mean square error on test set: '+str( mse_loss_norm)
-#logging.warning('Mean absolute error on the test set: '+ mae_loss_norm)
+pred= model.predict(X_test_seg)
 
 rpaf = recall_precision_accuracy_f1(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
 rete = relative_error_total_energy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)

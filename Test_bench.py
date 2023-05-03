@@ -48,24 +48,22 @@ def get_arguments():
     return parser.parse_args()
 
 window = 200
+
 args = get_arguments()
 log_file=args.log_path+"/"+args.name_log+".log"
 logging.basicConfig(filename=log_file, filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
-X_train_seg,y_train_seg,X_test_seg,y_test_seg, X2 = load_data(savepath=args.dataset_savepath,appliance=args.appliance)
-#X_train_seg,y_train_seg,X_test_seg,y_test_seg, X2 = load_data2()
+X_train_seg,y_train_seg,X_test_seg,y_test_seg, X_test = load_data(savepath=args.dataset_savepath, appliance=args.appliance)
+
 model =  load_model(args.model)
 
 MAX_X = 2000
 MAX_y = 200
 
-
 pred= model.predict(X_test_seg)
 
 mse_loss_norm = mse_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
 mae_loss_norm = mae_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-#logging.warning('Mean square error on test set: '+str( mse_loss_norm)
-#logging.warning('Mean absolute error on the test set: '+ mae_loss_norm)
 
 rpaf = recall_precision_accuracy_f1(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
 rete = relative_error_total_energy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
@@ -97,7 +95,7 @@ if args.appliance == "dishwasher":
 
 
 offset = int(window /2)
-plt.plot((X2)[start+offset:stop+offset], color = 'C2', alpha = 0.6, label = 'Main Value')
+plt.plot((X_test)[start + offset:stop + offset], color ='C2', alpha = 0.6, label ='Main Value')
 plt.plot((pred.reshape(-1)*MAX_y)[start:stop], color = 'C0', alpha = 0.6, label = 'Predicted value')
 plt.plot((y_test_seg*MAX_y)[start:stop], color = 'C3', alpha = 0.6, label = 'True Value')
 plt.title(args.appliance+ " Teacher Network")

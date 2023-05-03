@@ -78,12 +78,6 @@ pred= student.predict(X_test_seg)
 MAX_X = 2000
 MAX_y = 200
 
-
-mse_loss_norm = mse_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-mae_loss_norm = mae_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-#logging.warning('Mean square error on test set: '+str( mse_loss_norm)
-#logging.warning('Mean absolute error on the test set: '+ mae_loss_norm)
-
 rpaf = recall_precision_accuracy_f1(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
 rete = relative_error_total_energy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
 mae = mean_absolute_error(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)

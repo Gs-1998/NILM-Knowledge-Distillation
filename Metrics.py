@@ -87,13 +87,4 @@ def get_sae(target, prediction, sample_second):
     return sae
 
 def get_nde(target, prediction):
-    '''
-    compute the  normalized disaggregation error
-
-    Parameters:
-    ----------------
-    target: the groud truth , np.array
-    prediction: the prediction, np.array
-    '''
-
     return np.sum((target - prediction) ** 2) / np.sum((target ** 2))
