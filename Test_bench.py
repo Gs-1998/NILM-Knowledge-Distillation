@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import os
-import logging    # first of all import the module
+import logging
 import argparse
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

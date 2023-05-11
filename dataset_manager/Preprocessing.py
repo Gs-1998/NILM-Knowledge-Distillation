@@ -43,15 +43,4 @@ def create_house_dataframe(path_dataset,params_application,appliance):
 
     t = params_application[appliance]['test_build']
     test[t] = read_merge_data(t, params_application, appliance,path_dataset)
-
     return train,test
-
-def date(house_list, df):
-    dates = {}
-    for i in house_list:
-        dates[i] = [str(time)[:10] for time in df[i].index.values]
-        dates[i] = sorted(list(set(dates[i])))
-        #print('House {0} data contain {1} days from {2} to {3}.'.format(i, len(dates[i]), dates[i][0], dates[i][-1]))
-        #print(dates[i], '\n')
-
-    return

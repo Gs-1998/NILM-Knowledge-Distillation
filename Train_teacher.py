@@ -25,7 +25,7 @@ def get_arguments():
 
     parser.add_argument('--window',
                         type=int,
-                        default=300,
+                        default=200,
                         help='largezza finestra')
     parser.add_argument('--appliance',
                         type=remove_space,
@@ -45,7 +45,7 @@ def get_arguments():
                         help='path file log')
     parser.add_argument('--batch_size',
                         type=int,
-                        default=100,
+                        default=50,
                         help='larghezza batch size')
     parser.add_argument('--teacher_model',
                         type=remove_space,
@@ -80,10 +80,14 @@ if args.model=="GRU":
     model = create_model(windows_length, 'GRU')
 if args.model=="SGRU":
     model = create_model(windows_length, 'SGRU')
+if args.model == "STUDENT":
+    model = create_model(windows_length, 'STUDENT')
+if args.model == "S2P":
+    model = create_model(windows_length, 'S2P')
 
 callbacks = [
     EarlyStopping(monitor='val_loss', patience=2, verbose=0),
-    ModelCheckpoint(filepath=args.teacher_model+"/model/"+args.appliance +args.model+str(args.batch_size)+".h5", verbose=0, save_best_only=True)
+    ModelCheckpoint(filepath=args.teacher_model+"/model/"+args.appliance + args.model+str(args.batch_size)+".h5", verbose=0, save_best_only=True)
 ]
 model.compile(loss='mse', optimizer="adam", metrics='acc')
 

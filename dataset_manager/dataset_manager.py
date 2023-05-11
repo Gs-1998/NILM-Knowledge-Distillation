@@ -1,4 +1,4 @@
-from Preprocessing import create_house_dataframe, date
+from Preprocessing import create_house_dataframe
 import os
 from redd_parameters import *
 import argparse
@@ -26,7 +26,7 @@ def get_arguments():
                         help='path dove salvare il dataset')
     parser.add_argument('--appliance',
                         type=str,
-                        default='fridge',
+                        default='washingmachine',
                         help='nome del carico microwave - fridge - dishwasher - washingmachine')
 
 
@@ -70,53 +70,36 @@ def get_odd_data(X_o, y_o, MAX_X, MAX_y):
     plt.plot((X_o), color='C0', label='Main value')
     plt.plot((y_o), color='C3', label='True Value')
 
-    # plt.plot((X2)[70100:80100], color = 'C2', alpha = 0.6, label = 'Main Value')
     plt.legend()
     plt.show()
-    # X_o,y_o = get_house_raw_data(house, self.appliance)
-    X_o = remove_abnormal_points(X_o)  # 去除异常点
-    X_o = X_o / MAX_X  # (samples,1)
-    # X_d = get_differential_sequence(X_o)  # (samples,)
-    # X_dd = get_differential_sequence(X_d) # (samples,)
+    X_o = remove_abnormal_points(X_o)
+    X_o = X_o / MAX_X
 
-    y_o = remove_abnormal_points(y_o)  # 去除异常点
-    y_o = y_o / MAX_y  # (samples,1)
-    # y_d = get_differential_sequence(y_o)  # (samples,)
+    y_o = remove_abnormal_points(y_o)
+    y_o = y_o / MAX_y
 
     X = np.expand_dims(X_o, 1)  # (samples,3)
     y = np.expand_dims(y_o, 1)  # (samples,3)
-
     return X, y
 
 
 def shift_segment(X, y, seg_length, stride, print_info=True):
-    '''
-    X is X_o-X_d-X_dd  shape = (samples,3)
-    y is y_o-y_d       shape = (samples,2)
-    '''
     X_o_seg = []
-    # X_d_seg = []
-    # X_dd_seg = []
     y_o_seg = []
-    # y_d_seg = []
+
 
     for i in range(len(X) - seg_length + 1):
         if i % stride == 0:
             assert len(X[i:i + seg_length]) == seg_length
             X_o_seg.append(X[i:i + seg_length].reshape(-1))
-            # X_d_seg.append(  X[i:i+seg_length,1] )
-            # X_dd_seg.append( X[i:i+seg_length,2] )
-
             y_o_seg.append(y[i + seg_length // 2 - 1, 0])
-            # y_d_seg.append(  y[i+seg_length//2-1,1] )
     if print_info == True:
         print(' ' * 7, 'sequence length = {}'.format(len(X)))
         print(' ' * 7, 'windows length = {}'.format(seg_length))
         print(' ' * 7, 'stride = {}'.format(stride))
         print(' ' * 7, 'segments =', len(y_o_seg))
     # (segments,seg_length)
-    return np.array(X_o_seg, dtype=np.float32), np.array(y_o_seg,
-                                                         dtype=np.float32)  # ,np.array(X_d_seg), np.array(X_dd_seg)], [np.array(y_o_seg
+    return np.array(X_o_seg, dtype=np.float32), np.array(y_o_seg,dtype=np.float32)
 
 
 
@@ -132,8 +115,6 @@ def truncate(X_train1, y_train1, window_size):
 
 
 train,test = create_house_dataframe(path_dataset,params_appliance,appliance_name)
-#dates = date(params_appliance[appliance_name]['houses'], df)
-
 
 train_d=[]
 test_d=[]
@@ -200,8 +181,8 @@ X_i,y_i = get_odd_data(X_t, y_t, MAX_X, MAX_y)
 
 
 X_seg_i,y_seg_i = shift_segment(X_i,y_i,windows_length,stride)
-X_test = X_i   # shape=(samples,3)
-y_test = y_i   # shape=(samples,2)
+X_test = X_i
+y_test = y_i
 X_test_seg = X_seg_i
 y_test_seg = y_seg_i
 

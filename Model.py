@@ -56,6 +56,24 @@ def create_model(time_stamp, model_name):
         model.add(Dense(128, activation='relu'))
         model.add(Dense(1, activation='linear'))
 
+    if model_name == 'S2P':
+        model = Sequential()
+
+        model.add(Conv1D(30, 10, activation='relu', input_shape=(time_stamp,1), padding="same", strides=1))
+        model.add(Dropout(0.5))
+        model.add(Conv1D(30, 8, activation='relu', padding="same", strides=1))
+        model.add(Dropout(0.5))
+        model.add(Conv1D(40, 6, activation='relu', padding="same", strides=1))
+        model.add(Dropout(0.5))
+        model.add(Conv1D(50, 5, activation='relu', padding="same", strides=1))
+        model.add(Dropout(0.5))
+        model.add(Conv1D(50, 5, activation='relu', padding="same", strides=1))
+        model.add(Dropout(0.5))
+        model.add(Flatten())
+        model.add(Dense(1024, activation='relu'))
+        model.add(Dropout(0.5))
+        model.add(Dense(1, activation='linear'))
+
     return model
 
 
