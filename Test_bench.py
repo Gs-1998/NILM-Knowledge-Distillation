@@ -62,19 +62,15 @@ MAX_y = 200
 
 pred= model.predict(X_test_seg)
 
-mse_loss_norm = mse_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-mae_loss_norm = mae_loss(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
 
-rpaf = recall_precision_accuracy_f1(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
-rete = relative_error_total_energy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-mae = mean_absolute_error(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
+accuracy = get_accuracy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
+sae = get_sae(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
+mae = get_mae(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
 nde = get_nde(y_test_seg*MAX_y,pred.reshape(-1)*MAX_y)
 
-logging.warning("============ Recall: {}".format(rpaf[0]))
-logging.warning("============ Precision: {}".format(rpaf[1]))
-logging.warning("============ Accuracy: {}".format(rpaf[2]))
-logging.warning("============ F1 Score: {}".format(rpaf[3]))
-logging.warning("============ Relative error in total energy (SAE): {}".format(rete))
+
+logging.warning("============ Accuracy: {}".format(accuracy))
+logging.warning("============ Relative error in total energy (SAE): {}".format(sae))
 logging.warning("============ Mean absolute error (MAE): {}".format(mae))
 logging.warning("============ Normalized Decomposition Error (NDE): {}".format(nde))
 

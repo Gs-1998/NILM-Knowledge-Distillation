@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 from Load_data import load_data
-from Distiller import CustomModel
+from Distiller import KnowledgeDistillation
 from keras.models import load_model
 import argparse
 
@@ -66,9 +66,8 @@ model_student = create_model(200,"STUDENT")
 
 model_teacher =  load_model(args.model)
 
-Distiller = CustomModel(student = model_student, teacher = model_teacher)
+Distiller = KnowledgeDistillation(student = model_student, teacher = model_teacher)
 Distiller.compile(optimizer="adam", loss_fn="mse", metrics=["acc"],alpha=0.8)
-
 
 Distiller.fit(X_train_seg, y_train_seg, epochs=5,batch_size=100, validation_data=(X_test_seg,y_test_seg))
 
@@ -78,16 +77,14 @@ pred= student.predict(X_test_seg)
 MAX_X = 2000
 MAX_y = 200
 
-rpaf = recall_precision_accuracy_f1(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
-rete = relative_error_total_energy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-mae = mean_absolute_error(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
+
+accuracy = get_accuracy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
+sae = get_sae(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
+mae = get_mae(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
 nde = get_nde(y_test_seg*MAX_y,pred.reshape(-1)*MAX_y)
 
-logging.warning("============ Recall: {}".format(rpaf[0]))
-logging.warning("============ Precision: {}".format(rpaf[1]))
-logging.warning("============ Accuracy: {}".format(rpaf[2]))
-logging.warning("============ F1 Score: {}".format(rpaf[3]))
-logging.warning("============ Relative error in total energy (SAE): {}".format(rete))
+logging.warning("============ Accuracy: {}".format(accuracy))
+logging.warning("============ Relative error in total energy (SAE): {}".format(sae))
 logging.warning("============ Mean absolute error (MAE): {}".format(mae))
 logging.warning("============ Normalized Decomposition Error (NDE): {}".format(nde))
 plt.rcParams["figure.figsize"] = [21,9]

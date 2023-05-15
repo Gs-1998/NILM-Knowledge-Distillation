@@ -13,9 +13,9 @@ warnings.filterwarnings("ignore")
 
 
 
-class CustomModel(keras.Model):
+class KnowledgeDistillation(keras.Model):
     def __init__(self, student,teacher):
-        super(CustomModel, self).__init__()
+        super(KnowledgeDistillation, self).__init__()
         self.student = student
         self.teacher = teacher
 

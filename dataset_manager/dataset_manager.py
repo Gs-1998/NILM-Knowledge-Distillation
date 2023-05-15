@@ -26,7 +26,7 @@ def get_arguments():
                         help='path dove salvare il dataset')
     parser.add_argument('--appliance',
                         type=str,
-                        default='washingmachine',
+                        default='dishwasher',
                         help='nome del carico microwave - fridge - dishwasher - washingmachine')
 
 

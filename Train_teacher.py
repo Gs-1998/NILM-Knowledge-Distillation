@@ -45,7 +45,7 @@ def get_arguments():
                         help='path file log')
     parser.add_argument('--batch_size',
                         type=int,
-                        default=50,
+                        default=100,
                         help='larghezza batch size')
     parser.add_argument('--teacher_model',
                         type=remove_space,
@@ -82,8 +82,7 @@ if args.model=="SGRU":
     model = create_model(windows_length, 'SGRU')
 if args.model == "STUDENT":
     model = create_model(windows_length, 'STUDENT')
-if args.model == "S2P":
-    model = create_model(windows_length, 'S2P')
+
 
 callbacks = [
     EarlyStopping(monitor='val_loss', patience=2, verbose=0),
@@ -96,16 +95,14 @@ history_i = model.fit(X_train_seg, y_train_seg, epochs=20, batch_size=args.batch
 
 pred= model.predict(X_test_seg)
 
-rpaf = recall_precision_accuracy_f1(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
-rete = relative_error_total_energy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
-mae = mean_absolute_error(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
+accuracy = get_accuracy(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y, 50)
+sae = get_sae(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
+mae = get_mae(pred.reshape(-1)*MAX_y, y_test_seg*MAX_y)
 
 
-logging.warning("============ Recall: {}".format(rpaf[0]))
-logging.warning("============ Precision: {}".format(rpaf[1]))
-logging.warning("============ Accuracy: {}".format(rpaf[2]))
-logging.warning("============ F1 Score: {}".format(rpaf[3]))
-logging.warning("============ Relative error in total energy: {}".format(rete))
+
+logging.warning("============ Accuracy: {}".format(accuracy))
+logging.warning("============ Relative error in total energy: {}".format(sae))
 logging.warning("============ Mean absolute error(in Watts): {}".format(mae))
 
 

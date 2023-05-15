@@ -1,7 +1,5 @@
 import numpy as np
 
-from Preprocessing import create_house_dataframe, date
-import matplotlib.pyplot as plt
 
 
 def load_data(savepath="dataset",appliance="washer"):
